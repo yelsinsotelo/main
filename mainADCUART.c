@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include "avrpin.h"
 #include "stdio.h"
+#include <math.h>	
 #include <util/delay.h>
 
 void I_sys (){
@@ -13,14 +14,19 @@ void I_sys (){
 int main(void)
 {
 	I_sys();
-	//unsigned int adc_lecture;
-	DDRB=0b00111111;
+	//float adc_lecture;
+	char out_str[30];
+	DDRB=0xFF;
 	DDRD=0b11100000;
     while (1) 
     {
-		//adc_lecture=5/1023*readADC(pinADC5);
-		TxData(10);
 		
-    }
+		PORTB=readADC(pinADC5);
+		//adc_lecture=readADC(pinADC5);
+		unsigned int entero= readADC(pinADC5);
+		//unsigned int decimales= ((int)(adc_lecture*1000))%1000;		
+		sprintf(out_str, " %u\n\r ", entero);
+		TxString(out_str);
+		  }
 }
 
