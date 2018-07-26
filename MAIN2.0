@@ -1,0 +1,40 @@
+#define  F_CPU 20000000
+#define BAUD 9600
+#define  MYUBRR F_CPU/BAUD/16-1
+#include <avr/io.h>
+#include "avrpin.h"
+#include <stdio.h>
+#include <math.h>	
+#include <util/delay.h>
+
+void I_sys (){
+	initADC();
+	initUSART(MYUBRR);
+	}
+int main(void)
+{
+	I_sys();
+	unsigned int data;
+	double resistencia,R;
+	float T;
+	int entero;
+	char out_str[50];
+	DDRB=0xFF;
+	DDRD=0b11100000;
+    while (1) 
+    {
+		
+		data=readADC(pinADC5);
+		resistencia = (10000.0*5.0*(double)(data)/(5.0*1023.0-5.0*(double)(data)));
+		R=log(resistencia);
+		T=1/(0.00264614+(0.0000016315*R)+(0.00000089373*(pow(R,3))));
+		entero = T;	
+		sprintf(out_str, " %ld \n\r ", (int32_t)(resistencia));
+		TxString(out_str);	
+		sprintf(out_str, " %ld \n\r ", (int32_t)(T));
+		TxString(out_str);
+		sprintf(out_str, " %d \n\r ", entero);
+		TxString(out_str);
+		  }
+}
+
